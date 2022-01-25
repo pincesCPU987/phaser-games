@@ -17,10 +17,15 @@
         game.scale.pageAlignHorizontally = true;
         game.scale.pageAlignVertically = true;
         game.stage.backgroundColor = '#eee';
-        game.load.image('cookie', 'img/ball.png');
+        game.load.image('cookie', '/icons/Cookie-clipart-transparent.png');
     }
-    function create() {}
-    function update() {}
+    function create() {
+        cookie = game.add.sprite(50, 50, 'cookie');
+    }
+    function update() {
+        cookie.x += 1;
+        cookie.y += 1;
+    }
 </script>
 </body>
 </html>
