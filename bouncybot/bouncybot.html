@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>* { margin:0; padding:0; }html, body { width:100%; height:100%; overflow: hidden;}canvas { display:block; }</style>
+<script src="/phaser-games/js/phaser.min.js"></script>
+
+</head>
+<body>
+<script>
+var ball, spacebar, player, sprite, score, pauseText, text;
+
+function mathRandomInt(a, b) {
+  if (a > b) {
+    // Swap a and b to ensure a is smaller.
+    var c = a;
+    a = b;
+    b = c;
+  }
+  return Math.floor(Math.random() * (b - a + 1) + a);
+}
+
+
+let game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, 'Unnamed Game');
+game.state.add('main', {
+  preload: function(e) {
+    game.load.image('player', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAMAAADyHTlpAAAB9VBMVEUAAAD///8gcrsCi/DQ0NDBwsECjO79/f37/PseuZ0AAADx8vLp7PHNy8tdyk0EkuVekL0lccC343aG0RzZ2dkgnqeQl5kdccMRsrJrbm8Bhvfn5uYJntMswoTw8PAXuaQrgY00h2plnC/6+vv39/fs7Ozd3d3U1NQddMskbbS04nB2vSAmk/wDj+rh4eHg4ODb29vS0tLFxcS/y7ckeq0pv4YrhHwrhniIqltMx1oTi/wBifMIhO3o6ezo6OjW1tYOmNDOzc3LysrFxcXExcQgb70OrbshdrYnbK4ubanO6aU2bqIduZ1AcJ0qfpUqhYa64IIqhn4rjndDxWY/omBJx15dyUxayUtSqEiQ1DRlpTBmky8ej/ru7+0qiuPi4uITfOIFleHm7twHmNqcuNEKo8tqm8gXj8cahMQMqMPT4b8edb9ej7vW7bTK3LOwsLAcn6+zwacXsaYme6YhmqRqiaTI5J4YvZ5LeJ6OmJ0pfZ0cpZtggJkevpfE45apu5U4apUcq5LA4o0kwIwueYkjmIUkloWetIK02no1xHkvinI7xHGTrm8yk26OqG2v3Ws3nGo2lmpMtFRKpFJLolFXyU+f101/pUhhyked2UVszEJewkJ4zz9bqj5zmT6D0TyW1jthqjaBtTVxnDSH0CZupCWAyR8Im87rAAAAAXRSTlMAQObYZgAAAhxJREFUOMu11NVf21AUwPGbpjSBtnQjWYRQS92NlpbhMGDAcBkwd3d3d3f37e/cTUJGkt0+tfxeznn4PtzPebhg5WvELfrwxnKyiXOP1C434ua62pCyNeHOl+Zm69Vm50r5i/vCKBpPnJ2h3kcb1KJv/ry40xwBqCzumfkhElMjj/zY2NK8HklxburbYUKVhC/35WVhYBhJ1/Y/nB/y1dXZJAnH8cXpiYMb0HT//a9n/Mv06uL0GFvmWLudn65YFUrAcVd85llX7q7ODzc09NHC49EytHXnzXfjLoVK7yh+f3AhAtBtv/x6fLPNRhIYYYO9/dxyclAvTPjS4nCXnu5w8X6StLbz7bmf/86Km4w0wU39uneA4QVB4Jnck9+vJgaGjTSuLJb+/MdYrMjwPM8UY7GF52Mm+axxhUZwmMOhnKDrxPVJr7fAMEzB6/VO3r7FnpMfJpkIMMFUu6lt77E1MI7jpHFqdJC9pEhJASkJy3bLtvBqTeHwtfOyVJzO7tqzStuh00xWlUYbtNfo6qNVabTBYMCqLZCiVWm0tEAS2sgAnVGl3qaCLgLTRviTdoSElk76MH2EEDKj6Fa6gyB9pC5XugdF02mX0G3X1tMZSGVCCNoZMv9XdybUh6C0GVXvUQTtsNcg6qVBZbGsRakJtrSyLKg0j6dWzgmTF48HVCNRrIdRMDhEEVQtioK/cLSBokB1S2LZLAYq6S82IV4PAnrfgAAAAABJRU5ErkJggg==');
+    game.load.image('ball_green', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAY1BMVEUAAAA//z/t7e0R0RE9/j0OzQ4x8TEi4yIPzw86+jo3+Dco6SgU0xQIyAhp+2la/VpN/k1F/kUs7Swm5yYf4B8Y2BgW1RYLywvG8sYc2xxi/GJf/F/d8N3N8c2R95F7+XtV/VWmtnvoAAAAAXRSTlMAQObYZgAAATVJREFUSMe11tluwyAUBFAGbMCO19h1ti75/6/sLRVCSTFwFfW8RHkYwYAFiCgrFKGfMnVndAOn1asqCCwNHrSmTgc0Ig6n3cBpQVxldkJbhV1NrFNvkFJd/kaOyDg8j0G9mRmDApeH5kiY7rf75PqokKgTazUPH1LK882tW11Sff6Uv75AjE8o7Bukd/2Zmh9GJ3q8S+88h1XrsG+UwQhis5s4yGAAWQWxFWeUVpA3oLgL2SiyAKUr5mfWgBTuC9F+U8p235dBzjRexyn8de15un+MvDQxJTowWaHA07qtZNHug2FZBbv/5j5+ZhVy5M5L8JbZxg/X/CHL2Bp3KPHamKcDNq+py47xoFIvXRaEfyWJPn/x9ezrlX+J858K/AdJQs949gS2M7plPK58zCqlrBXRwDfRhBFR/kAAkgAAAABJRU5ErkJggg==');
+    game.load.image('ball_red', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAB3RJTUUH4QQaFQkFYK1d4QAAAAlwSFlzAAAewQAAHsEBw2lUUwAAAARnQU1BAACxjwv8YQUAAAECUExURf///9AQEM8PD9EREdESEtQVFeIjI/IzM/g5Of9AQPc4OPEyMuAgINITE8oKCs4PD+YmJvo7O84ODu8wMOoqKswNDegoKP4/P+MkJMwMDNUWFvw9PcgICOIiItscHO4vL+gpKckKCvAxMeQkJNwcHNYXF/0+Ps0NDewsLNMTE+ssLOEiItkZGdYWFucoKOAhIdUVFc8QENcYGNgYGP1QUP1cXPtmZv1bW/5NTf5GRvtra/HOzu7u7u7s7PLIyPxhYf9BQfeSkvl8fPtsbPxiYvDe3vLGxv5HR/xcXPxZWftpaftnZ/xbW/xaWv1OTvxgYP1XV/1WVv5MTPM0NPk6OtISEs6NaZQAAAABdFJOUwBA5thmAAABjElEQVRIx62WZ1fCMBRAAy1tHwhaBHHvhYig4k7dEwfO//9XbEKBlrQvTfV+6WlP78l4IyEkjBTRf3TNfcSjmDG+voFjmSN5uTA6ZkMAyyjiI4xDCKVypFCegHAqk1PhxvQMRGJrIcLsHGBU5kVlASQsDo+xDKDorEAMVv3GGvZn673z8cnXo/vCsR4tnLTPKHXOO5ds3zb6yiZiXFGOc80co2doyKxuqIdzy6bWSx4z2ni76yn0/oHlTteoIoO89A3qvLIP3XrYQpT2QKHP7EONlxOyXfDoG+WJ1wJTttGYDK0FoO4qO2jEgzvm0nAVG1WCcXHJ4UHhzimP/oVnQNYdRZqNrYPDo+PBKyF7oEiV7KsqTXUlwcTypKmq7Eo3eZisNJQCOWnCCDRkaSlSlyW/gCUtMYGatJAFuoVcMOMbpRhNKUi/KWGtL4gRq8H68TVYvI0PpqX/7bAgRP1IIgX5wbf0D8drgkM80VUhyYWE7YLytYeRzhim5dV5Ls7lyrvCpTVdS6VJ6KJ/AakqaG5vO0YIAAAAAElFTkSuQmCC');
+    game.load.image('ball_blue', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAATlBMVEUAAAA+Pv/t7e0ODs07O/0REdAuLvAWFtUmJuk3N/ghIeMfH+EJCcdMTP5ERP5oaPtZWf3FxfIcHNpVVf1hYfxeXvx6evmQkPfMzPHc3PAem7ALAAAAAXRSTlMAQObYZgAAASBJREFUSMe9ltmOwyAMRTFmCSQk6aSd5f9/dIARQs0QsFWp5yXKw9X1gmyLJih0JH5ooPXGQcaZWRMEk4InnMe+wECDCTsO0EZdOVkFl6hWTssMPdTHf4mBAdPZIyl4Gg8EnmKz0CEcjyOca4CdWq3bt5Ty9sgapKS+fsk/PtOfLwoN12yycM82Y5PwIwu3NVVtbLLLyg4RHDZxk5UNInMpF8nlgIgrPSHmkrBRMgFQK1YiS3HR+pIxpV607pdkYETY73uovyl7JpovsQzJWwNDoYGHy61kYfKDYTELdv42P35eKgnDjUvwaoan4UoaskybOvvINv40YBkm5N4o/cKyoKbDX2PTwl6v/CXOPxX4B0mHhXv28I+rCqLWGlE0Bb9KCA4tZCqNagAAAABJRU5ErkJggg==');
+  },
+  create: function(e) {
+    block_group = null;
+    obstacle_group = null;
+    ball = game.add.sprite(50, 100, 'ball_red');
+    game.physics.arcade.enable(ball);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.velocity.x = 400;
+      arcadeSpriteCustom.body.velocity.y = 400;
+      arcadeSpriteCustom.body.bounce.set(1);
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+    }(ball));
+    spacebar = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    spacebar.onDown.add(this.input_, this);
+    player = game.add.sprite((game.world.centerX), (game.world.centerY), 'player');
+    game.physics.arcade.enable(player);
+    sprite = game.add.sprite((game.world.centerX), (mathRandomInt(100, (game.world.height) - 100)), 'ball_green');
+    game.physics.arcade.enable(sprite);
+    score = 0;
+    text = game.add.text(10, 10, (String('SCORE: ') + String(score)), { font: '16px Arial Black', fill: '#000000'});
+    game.stage.backgroundColor = '#3333ff';
+    game.physics.arcade.isPaused = 0;
+    pauseText = game.add.text(150, 10, 'Pause', { font: '16px Arial Black', fill: '#ffffff'});
+    pauseText.inputEnabled = true;
+    pauseText.input.useHandCursor = true;
+  },
+  input_: function(e) {
+      if (spacebar.isDown && e !== spacebar) {
+        player.body.velocity.y = (-800);
+      } else {
+        player.body.velocity.y = 0;
+      }
+    let infinity_loop = function() {
+      try {
+      pauseText.events.onInputDown.add(function() {
+        if ((pauseText.text) == 'Pause') {
+          game.physics.arcade.isPaused = 1;
+          pauseText.text = 'Resume';
+          sprite.alpha = 0.5;
+          ball.alpha = 0.5;
+          player.alpha = 0.5;
+          game.stage.backgroundColor = '#000099';
+        } else {
+          game.physics.arcade.isPaused = 0;
+          pauseText.text = 'Pause';
+          sprite.alpha = 1;
+          ball.alpha = 1;
+          player.alpha = 1;
+          game.stage.backgroundColor = '#3333ff';
+        }
+      }, this);
+      } catch (err) {
+        return;
+      }
+      window.setTimeout(infinity_loop, 50);
+    };
+    infinity_loop();
+  },
+  update: function(e) {
+    if (e) {
+      this.input_(e);
+    }
+    let infinity_loop = function() {
+      try {
+      player.checkWorldBounds = true;
+      player.events.onOutOfBounds.add(function() {
+        player.kill();
+        player = game.add.sprite((game.world.centerX), ((game.world.height) - 50), 'player');
+        game.physics.arcade.enable(player);
+      }, this);
+      } catch (err) {
+        return;
+      }
+      window.setTimeout(infinity_loop, 50);
+    };
+    infinity_loop();
+    game.physics.arcade.overlap(player, ball, function(object1, object2) {
+      game.state.start('game_over');
+    }, null, this);
+    game.physics.arcade.overlap(player, sprite, function(object1, object2) {
+      score = (typeof score == 'number' ? score : 0) + 1;
+      sprite.kill();
+      sprite = game.add.sprite((game.world.centerX), (mathRandomInt(100, (game.world.height) - 100)), 'ball_green');
+      game.physics.arcade.enable(sprite);
+      text.text = (String('SCORE: ') + String(score));
+    }, null, this);
+  },
+  render: function(e) {
+  },
+}, true);
+game.state.add('game_over', {
+  preload: function(e) {
+  },
+  create: function(e) {
+    block_group = null;
+    obstacle_group = null;
+    game.add.text(10, 10, 'YOU ARE DIE', { font: '50px Times New Roman', fill: '#ffffff'});
+    game.add.text(10, ((game.world.height) - 60), 'PRESS SPACE', { font: '50px Arial Black', fill: '#ffffff'});
+    game.add.text(10, (game.world.centerY), (['Your score was ',score,'.'].join('')), { font: '30px Arial Black', fill: '#ffffff'});
+    game.stage.backgroundColor = '#000000';
+    spacebar = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    spacebar.onDown.add(this.input_, this);
+  },
+  input_: function(e) {
+    if (spacebar.isDown && e === spacebar) {
+      setTimeout(function(){game.state.start('main');},5000);
+    }
+  },
+  update: function(e) {
+    if (e) {
+      this.input_(e);
+    }
+  },
+  render: function(e) {
+  },
+}, false);
+
+</script>
+</body>
+</html>
