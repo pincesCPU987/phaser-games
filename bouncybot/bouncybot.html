@@ -4,7 +4,6 @@
 <head>
 <style>* { margin:0; padding:0; }html, body { width:100%; height:100%; overflow: hidden;}canvas { display:block; }</style>
 <script src="/phaser-games/js/phaser.min.js"></script>
-
 </head>
 <body>
 <script>
@@ -132,9 +131,9 @@ game.state.add('game_over', {
     spacebar.onDown.add(this.input_, this);
   },
   input_: function(e) {
-    if (spacebar.isDown && e === spacebar) {
-      setTimeout(function(){game.state.start('main');},5000);
-    }
+      if (spacebar.isDown && e === spacebar) {
+        setTimeout(function(){game.state.start('main');},5000);
+      }
   },
   update: function(e) {
     if (e) {
