@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>* { margin:0; padding:0; }html, body { width:100%; height:100%; overflow: hidden;}canvas { display:block; }</style>
+<script src="/phaser-games/js/phaser.min.js"></script>
+
+</head>
+<body>
+<script>
+var bgm, sound, bgg, start_text, ball, floor, spacebar, redd1, speed, text, ceiling, d, cursor_keys, a, modeDifficult, wall, space, mode, redd2, display, pause, pauseState, score, spacetime, keyboard_key, Paused;
+
+function mathRandomInt(a, b) {
+  if (a > b) {
+    // Swap a and b to ensure a is smaller.
+    var c = a;
+    a = b;
+    b = c;
+  }
+  return Math.floor(Math.random() * (b - a + 1) + a);
+}
+
+
+let game = new Phaser.Game(500, 700, Phaser.AUTO, 'BouncyBal');
+game.state.add('main', {
+  preload: function(e) {
+    game.load.image('50px_red', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAn1BMVEUAAAAAAIAAgAAAgICAAACAAICAgADAwMBkZGQJCQkAAP8A/wD/AAD//wD/AP8A///v7+/h4eHU1NTGxsa5ubmrq6udnZ2QkJCCgoJ1dXVnZ2dZWVlMTEw+Pj4xMTEjIyP/AADyAADmAADZAADMAAC/AACzAACmAACZAACMAACAAABzAABmAABZAABNAABAAAD/2tr/u7v/nJz/fX3/XV3pGHVwAAAAW0lEQVRIie3RywkAIAwDUMfJANl/Ng+V2kNRKuLFBPxUeFi0oZwGFiMiIiIiIvIjAQDYMs6tpo2U0Oe5xQkZ6haht06vQ5USbz1euL7lGlm+mLUe/mVLKnlGyum+je8shDgFkgAAAABJRU');
+    game.load.image('50px_green', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAABCFBMVEUAAAAAAIAAgAAAgICAAACAAICAgADAwMBkZGQJCQkAAP8A/wD/AAD//wD/AP8A///v7+/h4eHU1NTGxsa5ubmrq6udnZ2QkJCCgoJ1dXVnZ2dZWVlMTEw+Pj4xMTEjIyP/AADyAADmAADZAADMAAC/AACzAACmAACZAACMAACAAABzAABmAABZAABNAABAAAD/2tr/u7v/nJz/fX3/XV3/Pj7/Hx//AAD8qFzum0/hjkLTgTXFcye3ZhqqWQ2cTAD8/Njv78rj47vW1q3Kyp69vZCxsYKkpHOYmGWLi1Z/f0hycjpmZitZWR1NTQ5AQADQ/FzA7k+w4UKg0zWQxSeAtxpwqg1gnADHFUx9AAAAW0lEQVRIie3ROwoAIAwDUI+YLfe/iUOldihKRVxMwE+Fh0Uby2lEMSIiIiIiIj8SkqQt49xq2EgJfJ5bnpChbhF46/A6VCnx1uOF61uukeWLWevhX7akkmeknA5DtxTXptVz0wAAAA');
+    game.load.image('50px_blue', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAABmFBMVEUAAAAAAIAAgAAAgICAAACAAICAgADAwMBkZGQJCQkAAP8A/wD/AAD//wD/AP8A///v7+/h4eHU1NTGxsa5ubmrq6udnZ2QkJCCgoJ1dXVnZ2dZWVlMTEw+Pj4xMTEjIyP/AADyAADmAADZAADMAAC/AACzAACmAACZAACMAACAAABzAABmAABZAABNAABAAAD/2tr/u7v/nJz/fX3/XV3/Pj7/Hx//AAD8qFzum0/hjkLTgTXFcye3ZhqqWQ2cTAD8/Njv78rj47vW1q3Kyp69vZCxsYKkpHOYmGWLi1Z/f0hycjpmZitZWR1NTQ5AQADQ/FzA7k+w4UKg0zWQxSeAtxpwqg1gnADY/Ni5/Lma/Jp7/Htd/F0+/D4f/B8A/AAA/wAA8gAB5gAB2QABzAABvwACswACpgACmQACjAADgAADcwADZgADWQAETQAEQADo///Z8vLJ5ua62dmqzMybv7+Ls7N8pqZsmZldjIxNgIA+c3MuZmYfWVkPTU0AQEBcvPxPru5CoeE1k9MnhcUad7cNaqoAXJzdS1G8AAAAWklEQVRIie3ROwoAIAwDUI+eLdd2qNQORamIiwn4qfCwaGM5jShGRERERETkR0KStGWcWw0bKYHPc8sTMtQtAm8dXocqJd56vHB9yzWyfDFrPfzLllTyjJTTAWTI6aZHjs');
+    game.load.image('ball_blue', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAATlBMVEUAAAA+Pv/t7e0ODs07O/0REdAuLvAWFtUmJuk3N/ghIeMfH+EJCcdMTP5ERP5oaPtZWf3FxfIcHNpVVf1hYfxeXvx6evmQkPfMzPHc3PAem7ALAAAAAXRSTlMAQObYZgAAASBJREFUSMe9ltmOwyAMRTFmCSQk6aSd5f9/dIARQs0QsFWp5yXKw9X1gmyLJih0JH5ooPXGQcaZWRMEk4InnMe+wECDCTsO0EZdOVkFl6hWTssMPdTHf4mBAdPZIyl4Gg8EnmKz0CEcjyOca4CdWq3bt5Ty9sgapKS+fsk/PtOfLwoN12yycM82Y5PwIwu3NVVtbLLLyg4RHDZxk5UNInMpF8nlgIgrPSHmkrBRMgFQK1YiS3HR+pIxpV607pdkYETY73uovyl7JpovsQzJWwNDoYGHy61kYfKDYTELdv42P35eKgnDjUvwaoan4UoaskybOvvINv40YBkm5N4o/cKyoKbDX2PTwl6v/CXOPxX4B0mHhXv28I+rCqLWGlE0Bb9KCA4tZCqNagAAAABJRU5ErkJggg==');
+    game.load.image('bg_01', 'data:image/png;base64,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');
+    game.load.audio('bgmm', 'background.mp3');
+  },
+  create: function(e) {
+    block_group = null;
+    obstacle_group = null;
+    if (typeof bgm === 'undefined') {
+      bgm = game.add.audio('bgmm', 1, true);
+    } else {
+      bgm.stop();
+    }
+    bgm.play();
+    bgm.play();
+    bgg = game.add.tileSprite(0, 0, 1, 1, 'bg_01');
+    bgg.width = (game.world.width);
+    bgg.height = (game.world.height);
+    floor = game.add.tileSprite(0, (game.world.height - 50), game.world.width, 50, '50px_green');
+    floor.autoScroll(0, 0);
+    game.physics.arcade.enable(floor);
+    floor.body.immovable = true;
+    ceiling = game.add.tileSprite(0, 0, game.world.width, 50, '50px_blue');
+    ceiling.autoScroll(0, 0);
+    game.physics.arcade.enable(ceiling);
+    ceiling.body.immovable = true;
+    keyboard_key = this.input.keyboard.addKey(Phaser.KeyCode.SHIFT);
+    keyboard_key.onDown.add(this.input_, this);
+    a = this.input.keyboard.addKey(Phaser.KeyCode.A);
+    a.onDown.add(this.input_, this);
+    d = this.input.keyboard.addKey(Phaser.KeyCode.D);
+    d.onDown.add(this.input_, this);
+    cursor_keys = this.input.keyboard.createCursorKeys();
+    cursor_keys.down.onDown.add(this.input_, this);
+    cursor_keys.left.onDown.add(this.input_, this);
+    cursor_keys.right.onDown.add(this.input_, this);
+    cursor_keys.up.onDown.add(this.input_, this);
+    spacebar = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    spacebar.onDown.add(this.input_, this);
+    wall = game.add.sprite(0, 0, '50px_blue');
+    game.physics.arcade.enable(wall);
+    wall.width = 1;
+    wall.height = (game.world.height);
+    redd1 = game.add.sprite((game.world.width), (mathRandomInt(100, (game.world.height) - 100)), '50px_red');
+    game.physics.arcade.enable(redd1);
+    ball = game.add.sprite(50, 100, 'ball_blue');
+    game.physics.arcade.enable(ball);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.velocity.y = 400;
+    }(ball));
+    score = 0;
+    start_text = game.add.text(10, 30, 'Slow mode (click for Fast mode)', { font: '16px Arial Black', fill: '#000000'});
+    start_text.inputEnabled = true;
+    start_text.input.useHandCursor = true;
+    speed = 400;
+    text = game.add.text(10, 10, (['SCORE: ',score,' (click to enlarge)'].join('')), { font: '16px Arial Black', fill: '#000000'});
+    text.inputEnabled = true;
+    text.input.useHandCursor = true;
+    display = 2;
+    modeDifficult = game.add.text(10, 50, 'Easy mode (click for Hard mode)', { font: '16px Arial Black', fill: '#000000'});
+    modeDifficult.inputEnabled = true;
+    modeDifficult.input.useHandCursor = true;
+    mode = 1;
+    pause = game.add.text(((game.world.centerX) + 60), 10, 'Pause', { font: '16px Arial Black', fill: '#000000'});
+    pause.inputEnabled = true;
+    pause.input.useHandCursor = true;
+    pauseState = 0;
+    Paused = game.add.text((game.world.centerX), (game.world.centerY), '', { font: '30px Times New Roman', fill: '#ffffff'});
+  },
+  input_: function(e) {
+    let infinity_loop = function() {
+      try {
+      if ((d.isDown && e !== d) || (cursor_keys.right.isDown && e !== cursor_keys.right)) {
+        redd1.body.velocity.x = (0 - speed);
+        if (mode == 2) {
+          redd2.body.velocity.x = (0 - speed);
+        }
+        ceiling.autoScroll((0 - speed), 0);
+        floor.autoScroll((0 - speed), 0);
+        bgg.autoScroll((0 - speed), 0);
+      } else if ((a.isDown && e !== a) || (cursor_keys.left.isDown && e !== cursor_keys.left)) {
+        redd1.body.velocity.x = speed;
+        if (mode == 2) {
+          redd2.body.velocity.x = speed;
+        }
+        ceiling.autoScroll(speed, 0);
+        floor.autoScroll(speed, 0);
+        bgg.autoScroll(speed, 0);
+      } else {
+        redd1.body.velocity.x = 0;
+        if (mode == 2) {
+          redd2.body.velocity.x = 0;
+        }
+        ceiling.autoScroll(0, 0);
+        floor.autoScroll(0, 0);
+        bgg.autoScroll(0, 0);
+      }
+      if (spacebar.isDown && e === spacebar) {
+        bgm.stop();
+        game.state.start('main');
+      }
+      } catch (err) {
+        return;
+      }
+      window.setTimeout(infinity_loop, 50);
+    };
+    infinity_loop();
+    start_text.events.onInputDown.add(function() {
+      if (speed == 400) {
+        speed = 600;
+        start_text.text = 'Fast mode (click for Slow mode)';
+      } else {
+        speed = 400;
+        start_text.text = 'Slow mode (click for Fast mode)';
+      }
+    }, this);
+    text.events.onInputDown.add(function() {
+      if (display == 2) {
+        text.text = '';
+        display = 1;
+        text = game.add.text(10, 50, (['SCORE: ',score,' (click to shrink)'].join('')), { font: '30px Arial Black', fill: '#000000'});
+        text.inputEnabled = true;
+        text.input.useHandCursor = true;
+        modeDifficult.text = '';
+        if (mode == 2) {
+          modeDifficult = game.add.text(10, 10, 'Hard mode (click for Easy mode)', { font: '16px Arial Black', fill: '#000000'});
+          modeDifficult.inputEnabled = true;
+          modeDifficult.input.useHandCursor = true;
+        } else {
+          modeDifficult = game.add.text(10, 10, 'Easy mode (click for Hard mode)', { font: '16px Arial Black', fill: '#000000'});
+          modeDifficult.inputEnabled = true;
+          modeDifficult.input.useHandCursor = true;
+        }
+      } else {
+        text.text = '';
+        display = 2;
+        text = game.add.text(10, 10, (['SCORE: ',score,' (click to enlarge)'].join('')), { font: '16px Arial Black', fill: '#000000'});
+        text.inputEnabled = true;
+        text.input.useHandCursor = true;
+        modeDifficult.text = '';
+        if (mode == 2) {
+          modeDifficult = game.add.text(10, 50, 'Hard mode (click for Easy mode)', { font: '16px Arial Black', fill: '#000000'});
+          modeDifficult.inputEnabled = true;
+          modeDifficult.input.useHandCursor = true;
+        } else {
+          modeDifficult = game.add.text(10, 50, 'Easy mode (click for Hard mode)', { font: '16px Arial Black', fill: '#000000'});
+          modeDifficult.inputEnabled = true;
+          modeDifficult.input.useHandCursor = true;
+        }
+      }
+    }, this);
+    modeDifficult.events.onInputDown.add(function() {
+      if (mode == 1) {
+        modeDifficult.text = '';
+        if (display == 2) {
+          modeDifficult = game.add.text(10, 50, 'Hard mode (click for Easy mode)', { font: '16px Arial Black', fill: '#000000'});
+          modeDifficult.inputEnabled = true;
+          modeDifficult.input.useHandCursor = true;
+        } else {
+          modeDifficult = game.add.text(10, 10, 'Hard mode (click for Easy mode)', { font: '16px Arial Black', fill: '#000000'});
+          modeDifficult.inputEnabled = true;
+          modeDifficult.input.useHandCursor = true;
+        }
+        mode = 2;
+        redd1.kill();
+        redd1 = game.add.sprite((game.world.width), (mathRandomInt(100, (game.world.height) - 100)), '50px_red');
+        game.physics.arcade.enable(redd1);
+        redd2 = game.add.sprite((game.world.width), (mathRandomInt(100, (game.world.height) - 100)), '50px_red');
+        game.physics.arcade.enable(redd2);
+      } else {
+        modeDifficult.text = '';
+        if (display == 2) {
+          modeDifficult = game.add.text(10, 50, 'Easy mode (click for Hard mode)', { font: '16px Arial Black', fill: '#000000'});
+          modeDifficult.inputEnabled = true;
+          modeDifficult.input.useHandCursor = true;
+        } else {
+          modeDifficult = game.add.text(10, 10, 'Easy mode (click for Hard mode)', { font: '16px Arial Black', fill: '#000000'});
+          modeDifficult.inputEnabled = true;
+          modeDifficult.input.useHandCursor = true;
+        }
+        mode = 1;
+        redd2.kill();
+      }
+    }, this);
+    pause.events.onInputDown.add(function() {
+      if (pauseState == 0) {
+        pauseState = 1;
+        game.physics.arcade.isPaused = 1;
+        Paused.text = 'PAUSED';
+        redd1.alpha = 0.5;
+        floor.alpha = 0.5;
+        ceiling.alpha = 0.5;
+        ball.alpha = 0.5;
+        if (mode == 2) {
+          redd2.alpha = 0.5;
+        }
+        bgg.alpha = 0.5;
+        wall.alpha = 0.5;
+        pause.text = '';
+        pause = game.add.text(((game.world.centerX) + 60), 10, 'Resume', { font: '16px Arial Black', fill: '#ffffff'});
+        pause.inputEnabled = true;
+        pause.input.useHandCursor = true;
+      } else {
+        pauseState = 0;
+        game.physics.arcade.isPaused = 0;
+        Paused.text = '';
+        redd1.alpha = 1;
+        floor.alpha = 1;
+        ceiling.alpha = 1;
+        ball.alpha = 1;
+        if (mode == 2) {
+          redd2.alpha = 1;
+        }
+        bgg.alpha = 1;
+        wall.alpha = 1;
+        pause.text = '';
+        pause = game.add.text(((game.world.centerX) + 60), 10, 'Pause', { font: '16px Arial Black', fill: '#000000'});
+        pause.inputEnabled = true;
+        pause.input.useHandCursor = true;
+      }
+    }, this);
+  },
+  update: function(e) {
+    if (e) {
+      this.input_(e);
+    }
+    game.physics.arcade.overlap(ball, floor, function(object1, object2) {
+      ball.body.velocity.y = (0 - speed);
+    }, null, this);
+    game.physics.arcade.overlap(ball, ceiling, function(object1, object2) {
+      ball.body.velocity.y = speed;
+    }, null, this);
+    game.physics.arcade.overlap(redd1, wall, function(object1, object2) {
+      redd1.x = (game.world.width);
+      redd1.y = (mathRandomInt(100, (game.world.height) - 100));
+      score = (typeof score == 'number' ? score : 0) + 1;
+      if (mode == 2) {
+        score = (typeof score == 'number' ? score : 0) + 1;
+        redd2.kill();
+        redd2 = game.add.sprite((game.world.width), (mathRandomInt(100, (game.world.height) - 100)), '50px_red');
+        game.physics.arcade.enable(redd2);
+      }
+      if (display == 2) {
+        text.text = (['SCORE: ',score,' (click to enlarge)'].join(''));
+      } else {
+        text.text = (['SCORE: ',score,' (click to shrink)'].join(''));
+      }
+    }, null, this);
+    game.physics.arcade.overlap(redd1, ball, function(object1, object2) {
+      bgm.stop();
+      game.state.start('game_over');
+    }, null, this);
+    game.physics.arcade.overlap(redd2, ball, function(object1, object2) {
+      bgm.stop();
+      game.state.start('game_over');
+    }, null, this);
+  },
+  render: function(e) {
+  },
+}, false);
+game.state.add('game_over', {
+  preload: function(e) {
+    game.load.audio('die', 'you_are_die.mp3');
+  },
+  create: function(e) {
+    block_group = null;
+    obstacle_group = null;
+    sound = game.add.audio('die', 1, false);
+    sound.play();
+    spacebar = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    spacebar.onDown.add(this.input_, this);
+    game.add.text(10, 10, 'YOU ARE DIE', { font: '60px Times New Roman', fill: '#ffffff'});
+    game.add.text(10, ((game.world.centerY) - 60), (['Your score was ',score,'.'].join('')), { font: '30px Arial Black', fill: '#ffffff'});
+    space = game.add.text(10, ((game.world.height) - 60), 'PRESS SPACE', { font: '50px Arial Black', fill: '#ffffff'});
+    spacetime = 100;
+    let infinity_loop = function() {
+      try {
+      game.time.events.add(spacetime, function() {
+        space.text = '';
+      }, this);
+      spacetime = (typeof spacetime == 'number' ? spacetime : 0) + 100;
+      game.time.events.add(spacetime, function() {
+        space.text = 'PRESS SPACE';
+      }, this);
+      spacetime = (typeof spacetime == 'number' ? spacetime : 0) + 100;
+      } catch (err) {
+        return;
+      }
+      window.setTimeout(infinity_loop, 50);
+    };
+    infinity_loop();
+  },
+  input_: function(e) {
+    let infinity_loop = function() {
+      try {
+      if (spacebar.isDown && e === spacebar) {
+        game.state.start('main');
+      }
+      } catch (err) {
+        return;
+      }
+      window.setTimeout(infinity_loop, 50);
+    };
+    infinity_loop();
+  },
+  update: function(e) {
+    if (e) {
+      this.input_(e);
+    }
+  },
+  render: function(e) {
+  },
+}, false);
+game.state.add('start', {
+  preload: function(e) {
+  },
+  create: function(e) {
+    block_group = null;
+    obstacle_group = null;
+    spacebar = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    spacebar.onDown.add(this.input_, this);
+    game.add.text(10, 10, 'BouncyBal', { font: '50px Arial Black', fill: '#ffffff'});
+    space = game.add.text(10, ((game.world.height) - 60), 'PRESS SPACE', { font: '50px Arial Black', fill: '#ffffff'});
+    game.add.text(10, ((game.world.centerY) - 60), 'Use  left and right arrows to move (or A and D).', { font: '16px Arial Black', fill: '#ffffff'});
+    game.add.text(10, ((game.world.centerY) - 30), 'Avoid red blocks so they make it to the edge to score', { font: '16px Arial Black', fill: '#ffffff'});
+    game.add.text(10, ((game.world.centerY) - 15), 'points.', { font: '16px Arial Black', fill: '#ffffff'});
+    game.add.text(10, ((game.world.centerY) + 15), 'Keep track of your high score!', { font: '16px Arial Black', fill: '#ffffff'});
+    game.add.text(10, ((game.world.centerY) + 45), 'Finally, press space to reset the game.', { font: '16px Arial Black', fill: '#ffffff'});
+    game.add.text(10, ((game.world.centerY) + 75), 'Use the text on the upper left to change modes and the', { font: '16px Arial Black', fill: '#ffffff'});
+    game.add.text(10, ((game.world.centerY) + 95), 'size of the score.', { font: '16px Arial Black', fill: '#ffffff'});
+    spacetime = 100;
+    let infinity_loop = function() {
+      try {
+      game.time.events.add(spacetime, function() {
+        space.text = '';
+      }, this);
+      spacetime = (typeof spacetime == 'number' ? spacetime : 0) + 100;
+      game.time.events.add(spacetime, function() {
+        space.text = 'PRESS SPACE';
+      }, this);
+      spacetime = (typeof spacetime == 'number' ? spacetime : 0) + 100;
+      } catch (err) {
+        return;
+      }
+      window.setTimeout(infinity_loop, 50);
+    };
+    infinity_loop();
+  },
+  input_: function(e) {
+      if (spacebar.isDown && e === spacebar) {
+        game.state.start('main');
+      }
+  },
+  update: function(e) {
+    if (e) {
+      this.input_(e);
+    }
+  },
+  render: function(e) {
+  },
+}, true);
+
+</script>
+</body>
+</html>
