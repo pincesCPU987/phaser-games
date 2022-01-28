@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>* { margin:0; padding:0; }html, body { width:100%; height:100%; overflow: hidden;}canvas { display:block; }</style>
+<script src="http://127.0.0.1:8101/frameworks/internal/phaser_framework.js" data-filename="/frameworks/internal/phaser_framework.js"></script>
+<script src="http://127.0.0.1:8101/frameworks/external/phaser.min.js" data-filename="/frameworks/external/phaser.min.js"></script>
+
+</head>
+<body>
+<script>
+var spriteSetVal, time, spritex, moveState, spacebar, cursor_keys, wheel1;
+
+function mathRandomInt(a, b) {
+  if (a > b) {
+    // Swap a and b to ensure a is smaller.
+    var c = a;
+    a = b;
+    b = c;
+  }
+  return Math.floor(Math.random() * (b - a + 1) + a);
+}
+
+/**
+ * Describe this function...
+ */
+function setPos(spriteSetVal) {
+  spriteSetVal.destroy();
+  spriteSetVal = game.add.tileSprite((mathRandomInt(50, (game.world.width) - 50)), (mathRandomInt(50, (game.world.height) - 50)), 50, 50, '50px_red');
+  game.physics.arcade.enable(spriteSetVal);
+}
+
+
+let game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, 'Unnamed Game');
+game.state.add('main', {
+  preload: function(e) {
+    game.load.image('paddle', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAeCAMAAADthUvBAAABklBMVEUAAAArKSksKyoICAgsKyorKikrKikrKykqKSgrKikvLy0oJiY5ODcsLCsrKikrKiktLSosLCkoKCM8PDu3trYsKypFREMsKipNTUt/f38pKSkoJCRYVlaLi4lzcnGmpqV6enl3d3ZJSEejoqIrKio6OjkrKiosKihoZmYuLisvLS0/Pz8pKSkrKilGRUUvLi1XVlVqamlmZWU3NjZiYWBDQ0KZmpqIiYmFhoZ3eHg1NDNPT09UVFRKSUlFRET+/v4/Pj5ZWVk6OTlmZmb8/Pzh4eH09PSDg4Pt7e3c29uqqqqmpqajo6OSkpKLi4t6enpycXH5+fn39/fm5ubBwcG2tbWhoKCWlZVjY2Lx8fHk4+PW1ta/v76enp50dHPv7+/S0tLPz8+6urqAgIB9fHxTUlLJycm4uLiurq6bm5qXl5eHh4dcXFszMjH29vbq6uro6OjY2NjFxcWzsrKPjo6NjY1/f39sbGtBQUDd3d3Ly8vHx8fDw8Owr69ubm1gX15OTUxLS0o9PTw8Ozq8vb15eHjnFhDdAAAALXRSTlMAYfcF8vzmbu3ZTizqypl4QDcU9fTOxYp+WFMk8/Hx7urp6eG3r6uWgWFeWxpC6tu/AAADv0lEQVRIx73WZXPbQBAGYNehpszMTGfJSZrU0llkSWZmxsQBh8FpqMH/3T2d69ZJ+6XV9Plwu7Pj8Ts3q7Fs+d/6rj8YunL36rl/NHT3ytCD6zd+G3Htzs3nyDwv7nw4E3H90uOcKNrMI2pPre97M14/WxDBmHlE8PLeLxEX79/KGSF284jErXcXuyH35hOVeAyGrHlEwjN/39Jx4VFxdye/FBXFz+YRQfbr1JOPNOPGpcZ6ahVSVJGhDm3k/IznSdnEHHOawkqkzOPPzJ9Ahq5Va/5L9Fm+zdoba6nk9vKiylCFGTjSei7OM8y6nltkmV4jZU0PMoxTy+nFP4dEc5WCbzZ8mWR8GnTK7Y1gILnt9XDEYVIsclxL57lilWNjmEvnuR7K4hyHYyy34+cOyiPc74nqUj4xPTNX6u+DkHPWUWdrrx70N6e8CvF1ayWlKMWmotjU/dmEomyqLIwn3ZKibMgKjP3QaY1NFSuKb1oBrN2Vch8qjoyitBqKQfQsr6wWQ47MzQsQ8goh5eBbxJ3217YkwiE1A5KUmIF2MVILQMmF4RC0lLTu2ZeoEx2PxKCuVSUQintnvQlporxvi49LBlh6MrUWdk0evYGQQYTQ0T5J8dUEquYXhGoQGs29PQPFO0GmkVhJdwuUR/QJJQ80c14BrC1gYXLBLlSTu16bYCBLD27YWYEZhJABBA75sdKXWZ+TOvY7nZU0NJp7qgjFGzLGq+q2s0OOeNInHmhCXicIbsFRTTszC9G2kyJLd+/JNg4NQAgiBiQ+U5ob56mCj+dXAtB4GqTl426eCIp+viuQj8SgjFd4kN6BYyrF43hZ5ilj6d8ORhEij1c/IpjNyRHHBKYS0xj7EhiPqZnAFMYt1Y5BJtuM7WFQWmYxDuRbahvjZhKD2WU4tHU8navUMGUsnT+Cr7ZCyDDqppzIVGJXlh0xh5zMy5FYQ971ysRKRT7Ok2Ysm5LbiwF5q9CK6HUZzKhzclDPONR6JOqWDcbSJQSGIeQqouYF1tWxkoTDF80uNVwufzTrqZNhOhp2RbIB0q6Xy9GC3eWI61H4JAjE4+Vs0K4VXK7VpbYxoktH4C15WQ3+THH8qh4Kk7IB5bRwqG5UKIbpr+HTn6JLB+cfWuhSKM428Zea2pkRXToYoD/C3ZTR8b90vHxmRJZOnB+yGC6jH76YhyydXoTqs6KOEfPA0glrX/f1izps5uGQgWScusuoeeg9Lvb8r0Pnken6b/dZeg2ZHTPYf8Fy1sMrw1bTLjF89Zrl//oOcq8/UAh+/soAAAAASUVORK5CYII=');
+    game.load.image('ball_blue', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAATlBMVEUAAAA+Pv/t7e0ODs07O/0REdAuLvAWFtUmJuk3N/ghIeMfH+EJCcdMTP5ERP5oaPtZWf3FxfIcHNpVVf1hYfxeXvx6evmQkPfMzPHc3PAem7ALAAAAAXRSTlMAQObYZgAAASBJREFUSMe9ltmOwyAMRTFmCSQk6aSd5f9/dIARQs0QsFWp5yXKw9X1gmyLJih0JH5ooPXGQcaZWRMEk4InnMe+wECDCTsO0EZdOVkFl6hWTssMPdTHf4mBAdPZIyl4Gg8EnmKz0CEcjyOca4CdWq3bt5Ty9sgapKS+fsk/PtOfLwoN12yycM82Y5PwIwu3NVVtbLLLyg4RHDZxk5UNInMpF8nlgIgrPSHmkrBRMgFQK1YiS3HR+pIxpV607pdkYETY73uovyl7JpovsQzJWwNDoYGHy61kYfKDYTELdv42P35eKgnDjUvwaoan4UoaskybOvvINv40YBkm5N4o/cKyoKbDX2PTwl6v/CXOPxX4B0mHhXv28I+rCqLWGlE0Bb9KCA4tZCqNagAAAABJRU5ErkJggg==');
+    game.load.image('50px_blue', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAABmFBMVEUAAAAAAIAAgAAAgICAAACAAICAgADAwMBkZGQJCQkAAP8A/wD/AAD//wD/AP8A///v7+/h4eHU1NTGxsa5ubmrq6udnZ2QkJCCgoJ1dXVnZ2dZWVlMTEw+Pj4xMTEjIyP/AADyAADmAADZAADMAAC/AACzAACmAACZAACMAACAAABzAABmAABZAABNAABAAAD/2tr/u7v/nJz/fX3/XV3/Pj7/Hx//AAD8qFzum0/hjkLTgTXFcye3ZhqqWQ2cTAD8/Njv78rj47vW1q3Kyp69vZCxsYKkpHOYmGWLi1Z/f0hycjpmZitZWR1NTQ5AQADQ/FzA7k+w4UKg0zWQxSeAtxpwqg1gnADY/Ni5/Lma/Jp7/Htd/F0+/D4f/B8A/AAA/wAA8gAB5gAB2QABzAABvwACswACpgACmQACjAADgAADcwADZgADWQAETQAEQADo///Z8vLJ5ua62dmqzMybv7+Ls7N8pqZsmZldjIxNgIA+c3MuZmYfWVkPTU0AQEBcvPxPru5CoeE1k9MnhcUad7cNaqoAXJzdS1G8AAAAWklEQVRIie3ROwoAIAwDUI+eLdd2qNQORamIiwn4qfCwaGM5jShGRERERETkR0KStGWcWw0bKYHPc8sTMtQtAm8dXocqJd56vHB9yzWyfDFrPfzLllTyjJTTAWTI6aZHjs');
+    game.load.image('50px_red', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAn1BMVEUAAAAAAIAAgAAAgICAAACAAICAgADAwMBkZGQJCQkAAP8A/wD/AAD//wD/AP8A///v7+/h4eHU1NTGxsa5ubmrq6udnZ2QkJCCgoJ1dXVnZ2dZWVlMTEw+Pj4xMTEjIyP/AADyAADmAADZAADMAAC/AACzAACmAACZAACMAACAAABzAABmAABZAABNAABAAAD/2tr/u7v/nJz/fX3/XV3pGHVwAAAAW0lEQVRIie3RywkAIAwDUMfJANl/Ng+V2kNRKuLFBPxUeFi0oZwGFiMiIiIiIvIjAQDYMs6tpo2U0Oe5xQkZ6haht06vQ5USbz1euL7lGlm+mLUe/mVLKnlGyum+je8shDgFkgAAAABJRU');
+  },
+  create: function(e) {
+    block_group = null;
+    obstacle_group = null;
+    time = 20000;
+    if (spritex == null) {
+      spritex = 50;
+    }
+    moveState = 0;
+    spacebar = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    spacebar.onDown.add(this.input_, this);
+    cursor_keys = this.input.keyboard.createCursorKeys();
+    cursor_keys.down.onDown.add(this.input_, this);
+    cursor_keys.left.onDown.add(this.input_, this);
+    cursor_keys.right.onDown.add(this.input_, this);
+    cursor_keys.up.onDown.add(this.input_, this);
+    wheel1 = game.add.sprite(spritex, 100, 'ball_blue');
+    game.physics.arcade.enable(wheel1);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.velocity.x = 1600;
+      arcadeSpriteCustom.body.bounce.set(0.9);
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+      arcadeSpriteCustom.body.gravity.y = 1600;
+    }(wheel1));
+    wheel1.anchor.set(0.5);
+  },
+  input_: function(e) {
+      if (spacebar.isDown && e !== spacebar) {
+        if (moveState == 0) {
+          wheel1.y = ((wheel1.y) - 1);
+          wheel1.body.bounce.set(1.3);
+          moveState = 1;
+        } else {
+          wheel1.body.bounce.set(1.3);
+        }
+      } else {
+        moveState = 0;
+        wheel1.body.bounce.set(0.9);
+      }
+      if (cursor_keys.right.isDown && e === cursor_keys.right) {
+        wheel1.body.velocity.x = 1600;
+      }
+      if (cursor_keys.left.isDown && e === cursor_keys.left) {
+        wheel1.body.velocity.x = (-1600);
+      }
+  },
+  update: function(e) {
+    if (e) {
+      this.input_(e);
+    }
+  },
+  render: function(e) {
+  },
+}, true);
+
+</script>
+</body>
+</html>
