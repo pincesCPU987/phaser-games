@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>* { margin:0; padding:0; }html, body { width:100%; height:100%; overflow: hidden;}canvas { display:block; }</style>
+<script src="/phaser-games/js/phaser.min.js"></script>
+
+</head>
+<body>
+<script>
+var spr1, spr2, spr3, spr4, spr5, spr6, spr7, spr8, non1, spriteControl, non2, r1, r2, r3, g1, g2, g3, b1, b2, b3, non3, start_text, non4, spacebar, non5, non6, non7, non8, wasd_keys, cursor_keys;
+
+/**
+ * Describe this function...
+ */
+function changeFocus() {
+  if (spriteControl == r1) {
+    spriteControl = r2;
+    start_text.text = 'Controlling r2';
+    set18(r1, r3, g1, g2, g3, b1, b2, b3);
+  } else if (spriteControl == r2) {
+    spriteControl = r3;
+    start_text.text = 'Controlling r3';
+    set18(r1, r2, g1, g2, g3, b1, b2, b3);
+  } else if (spriteControl == r3) {
+    spriteControl = g1;
+    start_text.text = 'Controlling g1';
+    set18(r1, r2, r3, g2, g3, b1, b2, b3);
+  } else if (spriteControl == g1) {
+    spriteControl = g2;
+    start_text.text = 'Controlling g2';
+    set18(r1, r2, r3, g1, g3, b1, b2, b3);
+  } else if (spriteControl == g2) {
+    spriteControl = g3;
+    start_text.text = 'Controlling g3';
+    set18(r1, r2, r3, g1, g2, b1, b2, b3);
+  } else if (spriteControl == g3) {
+    spriteControl = b1;
+    start_text.text = 'Controlling b1';
+    set18(r1, r2, r3, g1, g2, g3, b2, b3);
+  } else if (spriteControl == b1) {
+    spriteControl = b2;
+    start_text.text = 'Controlling b2';
+    set18(r1, r2, r3, g1, g2, g3, b1, b3);
+  } else if (spriteControl == b2) {
+    spriteControl = b3;
+    start_text.text = 'Controlling b3';
+    set18(r1, r2, r3, g1, g2, g3, b1, b2);
+  } else if (spriteControl == b3) {
+    spriteControl = r1;
+    start_text.text = 'Controlling r1';
+    set18(b3, r2, r3, g1, g2, g3, b1, b2);
+  }
+}
+
+/**
+ * Describe this function...
+ */
+function set18(spr1, spr2, spr3, spr4, spr5, spr6, spr7, spr8) {
+  non1 = spr1;
+  non2 = spr2;
+  non3 = spr3;
+  non4 = spr4;
+  non5 = spr5;
+  non6 = spr6;
+  non7 = spr7;
+  non8 = spr8;
+}
+
+
+let game = new Phaser.Game(550, 500, Phaser.AUTO, 'Bu1ld3r');
+game.state.add('main', {
+  preload: function(e) {
+    game.load.image('r5050 (1).png', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAM9JREFUaEPtlzsOwjAUBJ2DpuVO0OagIBemMULTZP3RpEQv2uyMnyyOZynvssFz1CKP81y6yuu6Slek/liflcp1RVoJiww6oPserQp0ix2xyKDdaLHuyGABXfzfe2Slu2TfIrMdGfo9P5edvjzTnEVmstEu8X3/j8xGm3yPO0IoJWc0kqRNsjRCKCVnNJKkTbI0QiglZzSSpE2yNEIoJWc0kqRNsjRCKCVnNJKkTbI0QiglZzSSpE2yNEIoJWc0kqRNsjRCKCVnvkaSoXdlfQCgIADy8QgBDQAAAABJRU5ErkJggg==');
+    game.load.image('r5050 (2).png', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAMlJREFUaEPtlTEKgDAQBONDbf2TtnmoYqFgTCELC3dx7AT3cGe8OK2l7GWAazqLLPOcuspWa7mLnDe9K0PJMYu0Ni5D6YwMU4QdCXDedZc9w0701uB1/A5TpG2bodg//iMBdvjzKzyMfE4FfJAi0aRgBCMmAnxaJrDyWIzI6ExBjJjAymMxIqMzBTFiAiuPxYiMzhTEiAmsPBYjMjpTECMmsPJYjMjoTEGMmMDKYzEiozMFMWICK4/FiIzOFMSICaw89jYiTwgUPABm6f3jES3WPgAAAABJRU5ErkJggg==');
+    game.load.image('r5050 (3).png', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAMNJREFUaEPtlEEKgDAMBNuH9uqf9OpDFQ8WKiKysJCG8Sa4SzPTWNdSjpLgqdcgS2tTj7Lte+mDXC9vzwxD5hzkaeM2NJ2RNIOwIwH+d8Oyp7laaQZhR6LvSIDz/T7C57L/bgnwIYMEkDAcASMYMRHgapnAyrUYkdGZghgxgZVrMSKjMwUxYgIr12JERmcKYsQEVq7FiIzOFMSICaxcixEZnSmIERNYuRYjMjpTECMmsHItRmR0piBGTGDl2m5EbggUPAEG6f3jVamesgAAAABJRU5ErkJggg==');
+    game.load.image('g5050 (1).png', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAANBJREFUaEPtlTEKg0AURLX3aAo5kGXukyJXS2/YwhARmwfDusuzFGbWmff/Os6vxzZ08IwlyHOZmo6yvj/DIUh5UZ7Wgh2C7CEMUnE4+xytUmgXO2KQiruxH93njvxfv61dwZf/kaaD3GDU8SecdgQ7VRYapDKA0/ESkUioAUcrVCy2lQiuLiSUSKhYbCsRXF1IKJFQsdhWIri6kFAioWKxrURwdSGhRELFYluJ4OpCQomEisW2EsHVhYQSCRWLbSWCqwsJJRIqFtv+iGCHGwm/UmYgtqNM/uQAAAAASUVORK5CYII=');
+    game.load.image('g5050 (2).png', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAANJJREFUaEPtlUEKgzAURJN9j6bggbrsfVz0at0rLio0RggDg9/0uRTny7znj3mYpyV1cOWtyGt83LrK8/1JP0W2G7UretF+i5Q2voZuZ6SbIuzIxWfe6bJH34naClSP326KlI2jF/uf/8jFO9z8+oOR5mSwBykSTEjCCEZMBPi0TGDlsRiR0ZmCGDGBlcdiREZnCmLEBFYeixEZnSmIERNYeSxGZHSmIEZMYOWxGJHRmYIYMYGVx2JERmcKYsQEVh6LERmdKYgRE1h57G5EnhAouAKELyC2eOZMkgAAAABJRU5ErkJggg==');
+    game.load.image('g5050 (3).png', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAMhJREFUaEPtlDEKgEAMBLX3aQo+yNL/WPg1e8XCA0VEFhZyYewEd7nMXGz7ZdybBE97DjIPXdWjTOvWlEHOl7enhiFzDvK0cRmqzkiaQdiRAP+727KnuVppBmFHou9IgPP9PsLnsv9uCfAhgwSQcDsCRjBiIsDVMoGVazEiozMFMWICK9diREZnCmLEBFauxYiMzhTEiAmsXIsRGZ0piBETWLkWIzI6UxAjJrByLUZkdKYgRkxg5VqMyOhMQYyYwMq1xYjcECh4AJwvILZtS3H8AAAAAElFTkSuQmCC');
+    game.load.image('b5050 (1).png', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAANhJREFUaEPtlDEOgzAQBM0744L8Cyku+CfIRImwQrVodbE19LdmZ86eUl62NMA31SJ5nruuspaSmiLrqxyF8rOvYu8ij2WrP/4pQZHA5WyM1P/oe7VOl50igWt1bNJYr9Zoq3V+fnt7gpvVGqZI8H29dfzPZb+VFjhMkUD4l0djBCMmAqyWCawcixEZnWkQIyawcixGZHSmQYyYwMqxGJHRmQYxYgIrx2JERmcaxIgJrByLERmdaRAjJrByLEZkdKZBjJjAyrEYkdGZBjFiAivHfo3ICX80uANzaRCAqcNwuAAAAABJRU5ErkJggg==');
+    game.load.image('b5050 (2).png', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAANJJREFUaEPtlkEKhDAQBOM7Nwf3X8Lm4D8V2VXQ9dTQkhnK+zTpqiRmKHVaSoJv2IrUcQxdZW6tHEXmT7stU9/9l/wWeU3Lttg0Ra469mLhjMQv8jvs8bdW1iIRzsTfMbi7ftMUubaNUCzZDzHbEyXyY+u0tSjSAQGMdCDhtASMYMREgK1lAivHYkRGZxrEiAmsHIsRGZ1pECMmsHIsRmR0pkGMmMDKsRiR0ZkGMWICK8diREZnGsSICawcixEZnWkQIyawcixGZHSmwcOIKf/R2BULQRCAjEZg/AAAAABJRU5ErkJggg==');
+    game.load.image('b5050 (3).png', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAMxJREFUaEPtlkEKgzAABOM7m4P9l9Ac/KdF2gotPQ0sJGG875KdiehS6naUCZ7lHFLXdegpe2vlGrI/2t8x9d7/yNeQ23ach51myK+Oz7DhjIw/5P2yj3+1ZhsyzdWaZojvSAf/BF9f9g7Og4/gEIwuFNRICCyu1QhGFwpqJAQW12oEowsFNRICi2s1gtGFghoJgcW1GsHoQkGNhMDiWo1gdKGgRkJgca1GMLpQUCMhsLhWIxhdKKiREFhcqxGMLhTUSAgsrr2M4IaOgk+rMhCAxUYoGAAAAABJRU5ErkJggg==');
+  },
+  create: function(e) {
+    block_group = null;
+    obstacle_group = null;
+    spacebar = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    spacebar.onDown.add(this.input_, this);
+    r1 = game.add.sprite(50, 200, 'r5050 (1).png');
+    game.physics.arcade.enable(r1);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+      arcadeSpriteCustom.body.gravity.y = 1600;
+      arcadeSpriteCustom.body.allowGravity = true;
+      arcadeSpriteCustom.body.bounce.y = 0.3;
+    }(r1));
+    r2 = game.add.sprite(200, 200, 'r5050 (2).png');
+    game.physics.arcade.enable(r2);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+      arcadeSpriteCustom.body.gravity.y = 1600;
+      arcadeSpriteCustom.body.allowGravity = true;
+      arcadeSpriteCustom.body.bounce.y = 0.3;
+    }(r2));
+    r3 = game.add.sprite(350, 200, 'r5050 (3).png');
+    game.physics.arcade.enable(r3);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+      arcadeSpriteCustom.body.gravity.y = 1600;
+      arcadeSpriteCustom.body.allowGravity = true;
+      arcadeSpriteCustom.body.bounce.y = 0.3;
+    }(r3));
+    g1 = game.add.sprite(100, 100, 'g5050 (1).png');
+    game.physics.arcade.enable(g1);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+      arcadeSpriteCustom.body.gravity.y = 1600;
+      arcadeSpriteCustom.body.allowGravity = true;
+      arcadeSpriteCustom.body.bounce.y = 0.3;
+    }(g1));
+    g2 = game.add.sprite(250, 100, 'g5050 (2).png');
+    game.physics.arcade.enable(g2);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+      arcadeSpriteCustom.body.gravity.y = 1600;
+      arcadeSpriteCustom.body.allowGravity = true;
+      arcadeSpriteCustom.body.bounce.y = 0.3;
+    }(g2));
+    g3 = game.add.sprite(400, 100, 'g5050 (3).png');
+    game.physics.arcade.enable(g3);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+      arcadeSpriteCustom.body.gravity.y = 1600;
+      arcadeSpriteCustom.body.allowGravity = true;
+      arcadeSpriteCustom.body.bounce.y = 0.3;
+    }(g3));
+    b1 = game.add.sprite(150, 0, 'b5050 (1).png');
+    game.physics.arcade.enable(b1);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+      arcadeSpriteCustom.body.gravity.y = 1600;
+      arcadeSpriteCustom.body.allowGravity = true;
+      arcadeSpriteCustom.body.bounce.y = 0.3;
+    }(b1));
+    b2 = game.add.sprite(300, 0, 'b5050 (2).png');
+    game.physics.arcade.enable(b2);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+      arcadeSpriteCustom.body.gravity.y = 1600;
+      arcadeSpriteCustom.body.allowGravity = true;
+      arcadeSpriteCustom.body.bounce.y = 0.3;
+    }(b2));
+    b3 = game.add.sprite(450, 0, 'b5050 (3).png');
+    game.physics.arcade.enable(b3);
+    (function(arcadeSpriteCustom) {
+      arcadeSpriteCustom.body.collideWorldBounds = true;
+      arcadeSpriteCustom.body.gravity.y = 1600;
+      arcadeSpriteCustom.body.allowGravity = true;
+      arcadeSpriteCustom.body.bounce.y = 0.3;
+    }(b3));
+    spriteControl = r1;
+    non1 = r2;
+    non2 = r3;
+    non3 = g1;
+    non4 = g2;
+    non5 = g3;
+    non6 = b1;
+    non7 = b2;
+    non8 = b3;
+    cursor_keys = this.input.keyboard.createCursorKeys();
+    cursor_keys.down.onDown.add(this.input_, this);
+    cursor_keys.left.onDown.add(this.input_, this);
+    cursor_keys.right.onDown.add(this.input_, this);
+    cursor_keys.up.onDown.add(this.input_, this);
+    start_text = game.add.text(10, 10, 'Controlling r1', { font: '16px Arial Black', fill: '#AAAAAA'});
+    wasd_keys = {
+      up: this.input.keyboard.addKey(Phaser.Keyboard.W),
+      down: this.input.keyboard.addKey(Phaser.Keyboard.S),
+      left: this.input.keyboard.addKey(Phaser.Keyboard.A),
+      right: this.input.keyboard.addKey(Phaser.Keyboard.D),
+    }
+  },
+  input_: function(e) {
+      if (spacebar.isDown && e === spacebar) {
+        changeFocus();
+      }
+      if ((cursor_keys.left.isDown && e !== cursor_keys.left) || (wasd_keys.left.isDown && e !== wasd_keys.left)) {
+        spriteControl.body.velocity.x = (-200);
+      } else if ((cursor_keys.right.isDown && e !== cursor_keys.right) || (wasd_keys.right.isDown && e !== wasd_keys.right)) {
+        spriteControl.body.velocity.x = 200;
+      } else {
+        spriteControl.body.velocity.x = 0;
+      }
+      if ((cursor_keys.up.isDown && e !== cursor_keys.up) || (wasd_keys.up.isDown && e !== wasd_keys.up)) {
+        spriteControl.body.velocity.y = (-200);
+      } else {
+        spriteControl.body.gravity.y = 1600;
+      }
+      if (wasd_keys.down.isDown && e !== wasd_keys.down) {
+        game.state.start('main');
+      }
+  },
+  update: function(e) {
+    if (e) {
+      this.input_(e);
+    }
+    let infinity_loop = function() {
+      try {
+      non1.body.velocity.x = 0;
+      non2.body.velocity.x = 0;
+      non3.body.velocity.x = 0;
+      non4.body.velocity.x = 0;
+      non5.body.velocity.x = 0;
+      non6.body.velocity.x = 0;
+      non7.body.velocity.x = 0;
+      non8.body.velocity.x = 0;
+      } catch (err) {
+        return;
+      }
+      window.setTimeout(infinity_loop, 50);
+    };
+    infinity_loop();
+    for (var count = 0; count < 1; count++) {
+      game.physics.arcade.collide(r1, r2);
+      game.physics.arcade.collide(r1, r3);
+      game.physics.arcade.collide(r1, g1);
+      game.physics.arcade.collide(r1, g2);
+      game.physics.arcade.collide(r1, g3);
+      game.physics.arcade.collide(r1, b1);
+      game.physics.arcade.collide(r1, b2);
+      game.physics.arcade.collide(r1, b3);
+    }
+    for (var count2 = 0; count2 < 1; count2++) {
+      game.physics.arcade.collide(r2, r1);
+      game.physics.arcade.collide(r2, r3);
+      game.physics.arcade.collide(r2, g1);
+      game.physics.arcade.collide(r2, g2);
+      game.physics.arcade.collide(r2, g3);
+      game.physics.arcade.collide(r2, b1);
+      game.physics.arcade.collide(r2, b2);
+      game.physics.arcade.collide(r2, b3);
+    }
+    for (var count3 = 0; count3 < 1; count3++) {
+      game.physics.arcade.collide(r3, r1);
+      game.physics.arcade.collide(r3, r2);
+      game.physics.arcade.collide(r3, g1);
+      game.physics.arcade.collide(r3, g2);
+      game.physics.arcade.collide(r3, g3);
+      game.physics.arcade.collide(r3, b1);
+      game.physics.arcade.collide(r3, b2);
+      game.physics.arcade.collide(r3, b3);
+    }
+    for (var count4 = 0; count4 < 1; count4++) {
+      game.physics.arcade.collide(g1, r1);
+      game.physics.arcade.collide(g1, r2);
+      game.physics.arcade.collide(g1, r3);
+      game.physics.arcade.collide(g1, g2);
+      game.physics.arcade.collide(g1, g3);
+      game.physics.arcade.collide(g1, b1);
+      game.physics.arcade.collide(g1, b2);
+      game.physics.arcade.collide(g1, b3);
+    }
+    for (var count5 = 0; count5 < 1; count5++) {
+      game.physics.arcade.collide(g2, r1);
+      game.physics.arcade.collide(g2, r2);
+      game.physics.arcade.collide(g2, r3);
+      game.physics.arcade.collide(g2, g1);
+      game.physics.arcade.collide(g2, g3);
+      game.physics.arcade.collide(g2, b1);
+      game.physics.arcade.collide(g2, b2);
+      game.physics.arcade.collide(g2, b3);
+    }
+    for (var count6 = 0; count6 < 1; count6++) {
+      game.physics.arcade.collide(g3, r1);
+      game.physics.arcade.collide(g3, r2);
+      game.physics.arcade.collide(g3, r3);
+      game.physics.arcade.collide(g3, g1);
+      game.physics.arcade.collide(g3, g2);
+      game.physics.arcade.collide(g3, b1);
+      game.physics.arcade.collide(g3, b2);
+      game.physics.arcade.collide(g3, b3);
+    }
+    for (var count7 = 0; count7 < 1; count7++) {
+      game.physics.arcade.collide(b1, r1);
+      game.physics.arcade.collide(b1, r2);
+      game.physics.arcade.collide(b1, r3);
+      game.physics.arcade.collide(b1, g1);
+      game.physics.arcade.collide(b1, g2);
+      game.physics.arcade.collide(b1, g3);
+      game.physics.arcade.collide(b1, b2);
+      game.physics.arcade.collide(b1, b3);
+    }
+    for (var count8 = 0; count8 < 1; count8++) {
+      game.physics.arcade.collide(b2, r1);
+      game.physics.arcade.collide(b2, r2);
+      game.physics.arcade.collide(b2, r3);
+      game.physics.arcade.collide(b2, g1);
+      game.physics.arcade.collide(b2, g2);
+      game.physics.arcade.collide(b2, g3);
+      game.physics.arcade.collide(b2, b1);
+      game.physics.arcade.collide(b2, b3);
+    }
+    for (var count9 = 0; count9 < 1; count9++) {
+      game.physics.arcade.collide(b3, r1);
+      game.physics.arcade.collide(b3, r2);
+      game.physics.arcade.collide(b3, r3);
+      game.physics.arcade.collide(b3, g1);
+      game.physics.arcade.collide(b3, g2);
+      game.physics.arcade.collide(b3, g3);
+      game.physics.arcade.collide(b3, b1);
+      game.physics.arcade.collide(b3, b2);
+    }
+  },
+  render: function(e) {
+  },
+}, false);
+game.state.add('start', {
+  preload: function(e) {
+  },
+  create: function(e) {
+    block_group = null;
+    obstacle_group = null;
+    game.add.text(10, 10, 'Bu1ld3r', { font: '30px Arial Black', fill: '#ffffff'});
+    game.add.text(10, 250, 'To select a block, press space.', { font: '16px Arial Black', fill: '#ffffff'});
+    game.add.text(10, 280, 'To move a block, use up, down, and right, or w, a, and d.', { font: '16px Arial Black', fill: '#ffffff'});
+    game.add.text(10, 310, 'Blocks are color-coded and number-coded.', { font: '16px Arial Black', fill: '#ffffff'});
+    game.add.text(10, 450, 'PRESS S', { font: '30px Arial Black', fill: '#ffffff'});
+    wasd_keys = {
+      up: this.input.keyboard.addKey(Phaser.Keyboard.W),
+      down: this.input.keyboard.addKey(Phaser.Keyboard.S),
+      left: this.input.keyboard.addKey(Phaser.Keyboard.A),
+      right: this.input.keyboard.addKey(Phaser.Keyboard.D),
+    }
+  },
+  input_: function(e) {
+      if (wasd_keys.down.isDown && e !== wasd_keys.down) {
+        game.state.start('main');
+      }
+  },
+  update: function(e) {
+    if (e) {
+      this.input_(e);
+    }
+  },
+  render: function(e) {
+  },
+}, true);
+
+</script>
+</body>
+</html>
