@@ -133,7 +133,7 @@ game.state.add('game_over', {
   },
   input_: function(e) {
       if (spacebar.isDown && e === spacebar) {
-        game.state.start('main');
+        setTimeout(function(){game.state.start('main');},1000);
       }
   },
   update: function(e) {
